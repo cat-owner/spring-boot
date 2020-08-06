@@ -46,8 +46,11 @@ public abstract class Launcher {
 	 * @throws Exception if the application fails to launch
 	 */
 	protected void launch(String[] args) throws Exception {
+		//注册URL的协议处理器;
 		JarFile.registerUrlProtocolHandler();
+		//创建类的加载器
 		ClassLoader classLoader = createClassLoader(getClassPathArchives());
+		//执行启动类的main方法
 		launch(args, getMainClass(), classLoader);
 	}
 

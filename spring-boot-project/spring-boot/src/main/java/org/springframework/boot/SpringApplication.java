@@ -194,7 +194,9 @@ public class SpringApplication {
 	private static final String SYSTEM_PROPERTY_JAVA_AWT_HEADLESS = "java.awt.headless";
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
-
+	/**
+	 * java config类的数组
+	 */
 	private Set<Class<?>> primarySources;
 
 	private Set<String> sources = new LinkedHashSet<>();
@@ -210,7 +212,9 @@ public class SpringApplication {
 	private boolean addConversionService = true;
 
 	private Banner banner;
-
+	/**
+	 * 资源加载器
+	 */
 	private ResourceLoader resourceLoader;
 
 	private BeanNameGenerator beanNameGenerator;
@@ -219,14 +223,22 @@ public class SpringApplication {
 
 	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
 
+	/**
+	 * web应用类型
+	 */
 	private WebApplicationType webApplicationType;
 
 	private boolean headless = true;
 
 	private boolean registerShutdownHook = true;
 
+	/**
+	 *ApplicationContextInitializer数组
+	 */
 	private List<ApplicationContextInitializer<?>> initializers;
-
+	/**
+	 * ApplicationListener数组
+	 */
 	private List<ApplicationListener<?>> listeners;
 
 	private Map<String, Object> defaultProperties;
@@ -424,20 +436,35 @@ public class SpringApplication {
 		ClassLoader classLoader = getClassLoader();
 		// Use names and ensure unique to protect against duplicates
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		//创建对象
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
+		//对上面创建的对象进行排序
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}
 
+	/**
+	 * 创建对象的数组
+	 * @param type：父类
+	 * @param parameterTypes：构造方法的参数类型
+	 * @param classLoader：类加载器
+	 * @param args：参数
+	 * @param names：类名的数组
+	 * @param <T>：泛型
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
 			ClassLoader classLoader, Object[] args, Set<String> names) {
 		List<T> instances = new ArrayList<>(names.size());
 		for (String name : names) {
 			try {
+				//获得name对应的类
 				Class<?> instanceClass = ClassUtils.forName(name, classLoader);
 				Assert.isAssignable(type, instanceClass);
+				//获得对应的构造方法
 				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes);
+				//创建对象
 				T instance = (T) BeanUtils.instantiateClass(constructor, args);
 				instances.add(instance);
 			}
@@ -1210,7 +1237,10 @@ public class SpringApplication {
 	 * @param primarySource the primary source to load
 	 * @param args the application arguments (usually passed from a Java main method)
 	 * @return the running {@link ApplicationContext}
+	 *
 	 */
+	//string...args是一个不定参数，相当于String[] args
+
 	public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
 		return run(new Class<?>[] { primarySource }, args);
 	}
